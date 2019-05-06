@@ -1,0 +1,7 @@
+{
+  "name": "physapp",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}
