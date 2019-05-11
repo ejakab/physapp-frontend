@@ -2,6 +2,9 @@ import { AuthService } from './../../services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { ToastController } from '@ionic/angular';
+import { ExercisesPage } from './exercises/exercises.page';
+import { ProgressPage } from './progress/progress.page';
+import { ProfilePage } from './profile/profile.page';
  
 @Component({
   selector: 'app-inside',
@@ -38,4 +41,8 @@ export class InsidePage implements OnInit {
     toast.then(toast => toast.present());
   }
  
+  tab1Root = ExercisesPage;
+  tab2Root = ProgressPage;
+  tab3Root = ProfilePage;
+
 }

@@ -1,16 +1,28 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Inside</ion-title>
-  </ion-toolbar>
-</ion-header>
- 
-<ion-content padding>
-  Welcome to the members only area!
- 
-  <p>{{ data }}</p>
- 
-  <ion-button expand="full" (click)="loadSpecialInfo()">Load Special Info</ion-button>
-  <ion-button expand="full" (click)="logout()">Logout</ion-button>
-  <ion-button expand="full" (click)="clearToken()">Clear JWT</ion-button>
- 
-</ion-content>
+  <ion-tabs>
+    <ion-tab-bar slot="bottom">
+  
+      <ion-tab-button tab="home" [routerLink]="['./home']">
+        <ion-icon name="home"></ion-icon>
+        <ion-label>Home</ion-label>
+      </ion-tab-button>
+  
+      <ion-tab-button tab="exercises" [routerLink]="['./exercises']">
+        <ion-icon name="body"></ion-icon>
+        <ion-label>Exercises</ion-label>
+        <ion-badge>6</ion-badge>
+      </ion-tab-button>
+  
+      <ion-tab-button tab="progress" [routerLink]="['./progress']">
+        <ion-icon name="analytics"></ion-icon>
+        <ion-label>Progress</ion-label>
+      </ion-tab-button>
+
+      <ion-tab-button tab="profile" [routerLink]="['./profile']">
+        <ion-icon name="settings"></ion-icon>
+        <ion-label>Profile</ion-label>
+
+      </ion-tab-button>
+  
+     
+    </ion-tab-bar>
+  </ion-tabs>
