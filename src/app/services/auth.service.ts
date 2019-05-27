@@ -6,8 +6,7 @@ import { Storage } from '@ionic/storage';
 import { environment } from '../../environments/environment';
 import { tap, catchError } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
-
-//the key where our token will be stored
+ 
 const TOKEN_KEY = 'access_token';
  
 @Injectable({
@@ -17,7 +16,7 @@ export class AuthService {
  
   url = environment.url;
   user = null;
-  authenticationState = new BehaviorSubject(false); //a special type of observable, the app component will automatically know if the auth state has changed and we can switch the pages
+  authenticationState = new BehaviorSubject(false);
  
   constructor(private http: HttpClient, private helper: JwtHelperService, private storage: Storage,
     private plt: Platform, private alertController: AlertController) {
@@ -32,11 +31,11 @@ export class AuthService {
         let decoded = this.helper.decodeToken(token);
         let isExpired = this.helper.isTokenExpired(token);
  
-        if (!isExpired) { //if we have a token log in the user automatically
+        if (!isExpired) {
           this.user = decoded;
           this.authenticationState.next(true);
         } else {
-          this.storage.remove(TOKEN_KEY); //because it's expired anyway, we don't need it anymore
+          this.storage.remove(TOKEN_KEY);
         }
       }
     });
@@ -54,10 +53,10 @@ export class AuthService {
   login(credentials) {
     return this.http.post(`${this.url}/api/login`, credentials)
       .pipe(
-        tap(res => { 
-          this.storage.set(TOKEN_KEY, res['token']); //set the token into our storage
-          this.user = this.helper.decodeToken(res['token']); //we decode it to set our user object
-          this.authenticationState.next(true); //now we are authenticated
+        tap(res => {
+          this.storage.set(TOKEN_KEY, res['token']);
+          this.user = this.helper.decodeToken(res['token']);
+          this.authenticationState.next(true);
         }),
         catchError(e => {
           this.showAlert(e.error.msg);
@@ -73,7 +72,7 @@ export class AuthService {
   }
  
   getSpecialData() {
-    return this.http.get(`${this.url}/api/special`).pipe( //we send the token here
+    return this.http.get(`${this.url}/api/special`).pipe(
       catchError(e => {
         let status = e.status;
         if (status === 401) {
@@ -86,7 +85,7 @@ export class AuthService {
   }
  
   isAuthenticated() {
-    return this.authenticationState.value; //the value of auth state used for AuthGuardService
+    return this.authenticationState.value;
   }
  
   showAlert(msg) {

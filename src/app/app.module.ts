@@ -32,7 +32,7 @@ export function jwtOptionsFactory(storage) {
     jwtOptionsProvider: {
       provide: JWT_OPTIONS,
       useFactory: jwtOptionsFactory,
-      deps: [Storage]
+      deps: [Storage],
     }
   })],
   providers: [
