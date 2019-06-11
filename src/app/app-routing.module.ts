@@ -30,6 +30,7 @@ const routes: Routes = [
     loadChildren: "./pages/inside/profile/profile.module#ProfilePageModule",
     canActivate: [AuthGuardService]
   },
+  { path: 'register', loadChildren: './pages/inside/register/register.module#RegisterPageModule' },
 
 ];
  
