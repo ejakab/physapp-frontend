@@ -6,4 +6,52 @@
 
 <ion-content>
 
+<ion-list>
+  <!-- <ion-item-sliding *ngFor="let exercise of exercises">
+    <ion-item>
+      <ion-card >
+        <ion-card-header>
+          <ion-card-subtitle>{{exercise.name}}</ion-card-subtitle>
+          <ion-card-title>Awesome Title</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Awesome content
+        </ion-card-content>
+      </ion-card>
+    </ion-item>
+    <ion-item-options side="start">
+      <ion-item-option (click)="favorite(item)">Favorite</ion-item-option>
+      <ion-item-option color="primary" (click)="share(item)">Share</ion-item-option>
+    </ion-item-options>
+
+    <ion-item-options side="start">
+      <ion-item-option (click)="unread(item)">Unread</ion-item-option>
+    </ion-item-options>
+  </ion-item-sliding> -->
+
+  <ion-item-sliding *ngFor="let exercise of exercises" (ionSwipe)="removeExercise(exercise)" (ionDrag)="handleSlide($event)">
+    <ion-item-options side="start">
+      <ion-item-option color="success" (click)="likeExercise(item)"><ion-icon name="thumbs-up"></ion-icon></ion-item-option>
+    </ion-item-options>
+
+    <ion-item>
+      <ion-card >
+        <ion-card-header>
+          <ion-card-subtitle>{{exercise.name}}</ion-card-subtitle>
+          <ion-card-title>{{exercise.name}}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+            <ion-thumbnail slot="start">
+                <!-- <ion-img [src]="src/app/assets/exercises/" + {{exercise.imgURI}} + ".png"></ion-img> -->
+              </ion-thumbnail>
+              {{exercise.description}}
+        </ion-card-content>
+      </ion-card>
+    </ion-item>
+
+    <ion-item-options side="end">
+      <ion-item-option color="danger" (click)="dislikeExercise(item)"><ion-icon name="thumbs-down"></ion-icon></ion-item-option>
+    </ion-item-options>
+  </ion-item-sliding>
+</ion-list>
 </ion-content>
