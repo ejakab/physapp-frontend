@@ -6,12 +6,18 @@ import { Storage } from "@ionic/storage";
 import { environment } from "../../environments/environment";
 import { tap, catchError, map, switchMap } from "rxjs/operators";
 import { BehaviorSubject, Observable } from "rxjs";
-import { User } from '../models/user.model';
-import { DataService } from './data.service';
-
+import { User } from "../models/user.model";
+import { DataService } from "./data.service";
 
 interface UserDataJSON {
   items: User[];
+}
+export interface UpdatedUser {
+  updatedUser: User;
+}
+interface UserCredentials {
+  email: string;
+  password: string;
 }
 const TOKEN_KEY = "access_token";
 
@@ -21,7 +27,7 @@ const TOKEN_KEY = "access_token";
 export class AuthService {
   url = environment.url;
   userToken = null;
-  private _user = new BehaviorSubject<User>(null);
+  private _user: BehaviorSubject<User> = new BehaviorSubject<User>(null);
   authenticationState = new BehaviorSubject(false);
   constructor(
     private http: HttpClient,
@@ -35,7 +41,7 @@ export class AuthService {
       this.checkToken();
     });
   }
-/** Returns you a nice user observable */
+  /** Returns you a nice user observable */
   get user(): Observable<User> {
     return this._user.asObservable();
   }
@@ -55,7 +61,7 @@ export class AuthService {
     });
   }
 
-  register(credentials) {
+  register(credentials: UserCredentials) {
     return this.http.post(`${this.url}/api/register`, credentials).pipe(
       catchError(e => {
         this.showAlert(e.error.msg);
@@ -64,11 +70,11 @@ export class AuthService {
     );
   }
 
-  login(credentials) {
+  login(credentials: UserCredentials) {
     return this.http.post(`${this.url}/api/login`, credentials).pipe(
       tap(res => {
         this.storage.set(TOKEN_KEY, res["token"]);
-        this.storage.set("email",credentials.email)
+        this.storage.set("email", credentials.email);
         this.userToken = this.helper.decodeToken(res["token"]);
         this.authenticationState.next(true);
       }),
@@ -76,8 +82,6 @@ export class AuthService {
         return this.dataService.getUsers();
       }),
       map(users => {
-        console.log(users);
-        
         for (const user of users) {
           if (user.email === credentials.email) {
             this._user.next(user);
@@ -95,6 +99,7 @@ export class AuthService {
   logout() {
     this.storage.remove(TOKEN_KEY).then(() => {
       this.authenticationState.next(false);
+      this._user.next(null);
     });
   }
 
@@ -110,13 +115,21 @@ export class AuthService {
       })
     );
   }
-  
 
-  isAuthenticated() {
+  isAuthenticated(): boolean {
     return this.authenticationState.value;
   }
+  updateUser(userDoc: User) {
+    console.log("New user");
 
-  showAlert(msg) {
+    console.log(userDoc);
+    const user: User = userDoc;
+    console.log(this._user.value.completed);
+
+    this._user.next(user);
+    console.log(this._user.value.completed);
+  }
+  private showAlert(msg: string): void {
     let alert = this.alertController.create({
       message: msg,
       header: "Error",

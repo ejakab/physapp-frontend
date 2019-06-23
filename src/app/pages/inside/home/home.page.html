@@ -4,13 +4,82 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-   <ion-item>Hello {{user?.email}}</ion-item> 
+<ion-content *ngIf="!isLoading" padding>
+  <ng-container *ngIf="user; else elseTemplate">
+    <ion-item>Welcome back, {{ user?.name }}</ion-item>
 
-   <!-- Welcome to the members only area!
+    <!-- Welcome to the members only area!
   <ion-button expand="full" (click)="loadSpecialInfo()">Load Special Info</ion-button>
   <ion-button expand="full" (click)="logout()">Logout</ion-button>
   <ion-button expand="full" (click)="clearToken()">Clear JWT</ion-button>
   <ion-button expand="full" (click)="getData()">Test</ion-button> -->
 
+    <ion-card>
+      <ion-card-header>
+        Progress
+      </ion-card-header>
+      <ion-card-content>
+        <div
+          *ngIf="user.dizzyLog && user.dizzyLog !== 0"
+          style="display: block"
+        >
+          <canvas
+            #myChart
+            baseChart
+            [datasets]="chartData"
+            [labels]="chartLabels"
+            [options]="chartOptions"
+            [legend]="chartLegend"
+            [chartType]="chartType"
+            [colors]="chartColors"
+          ></canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        Today's dizziness level
+      </ion-card-header>
+      <ion-card-content>
+        <form
+          *ngIf="canSubmit; else submittedTemplate"
+          #f="ngForm"
+          (ngSubmit)="onSubmit()"
+        >
+          <ion-item>
+            <ion-range
+              pin="true"
+              min="1"
+              max="10"
+              step="1"
+              snaps="true"
+              ticks="true"
+              name="level"
+              ngModel
+              required
+            >
+              <ion-label slot="start">1</ion-label>
+              <ion-label slot="end">10</ion-label>
+            </ion-range>
+          </ion-item>
+          <ion-button
+            expand="block"
+            color="primary"
+            type="submit"
+            [disabled]="f.invalid && canSubmit"
+          >
+            Submit log
+          </ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+  <ng-template #elseTemplate>
+    Please reauthenticate to initialize user
+    <ion-button expand="block" (click)="logout()"> Login again</ion-button>
+  </ng-template>
+  <ng-template #submittedTemplate>
+    You have already submitted today, come back tomorrow!
+  </ng-template>
 </ion-content>
