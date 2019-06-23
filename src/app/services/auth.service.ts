@@ -4,8 +4,8 @@ import { HttpClient } from "@angular/common/http";
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { Storage } from "@ionic/storage";
 import { environment } from "../../environments/environment";
-import { tap, catchError, map, switchMap } from "rxjs/operators";
-import { BehaviorSubject, Observable } from "rxjs";
+import { tap, catchError, map, switchMap, filter } from "rxjs/operators";
+import { BehaviorSubject, Observable, from } from "rxjs";
 import { User } from "../models/user.model";
 import { DataService } from "./data.service";
 
@@ -53,12 +53,23 @@ export class AuthService {
 
         if (!isExpired) {
           this.userToken = decoded;
+          this.reauthenticate();
           this.authenticationState.next(true);
         } else {
           this.storage.remove(TOKEN_KEY);
         }
       }
     });
+  }
+  private reauthenticate() {
+    from(this.storage.get(TOKEN_KEY)).pipe(
+      filter(token => !!token),
+      switchMap(token => {        
+        return this.http.get(`${this.url}/api/reauth`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      })
+    ).subscribe(res => this._user.next(res as User));
   }
 
   register(credentials: UserCredentials) {
@@ -76,6 +87,8 @@ export class AuthService {
         this.storage.set(TOKEN_KEY, res["token"]);
         this.storage.set("email", credentials.email);
         this.userToken = this.helper.decodeToken(res["token"]);
+        console.log(this.userToken);
+
         this.authenticationState.next(true);
       }),
       switchMap(res => {

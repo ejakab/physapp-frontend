@@ -22,7 +22,7 @@ import { distinctUntilChanged } from "rxjs/operators";
   styleUrls: ["./home.page.scss"]
 })
 export class HomePage implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild("myChart") chart: ElementRef;
+  @ViewChild("myChart") canvas: ElementRef;
   @ViewChild("f") f: NgForm;
   canSubmit = false;
   isLoading = true;
@@ -56,7 +56,7 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
   chartLabels: Label[] = [];
   chartType: ChartType = "line";
   chartLegend = true;
-  chartColors: ChartColor;
+  chartColors;
   chartData: any[] = [{ data: [], label: "Dizziness" }];
   userSub: Subscription;
   user: User;
@@ -86,14 +86,26 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
               this.canSubmit = true;
             }
             this.updateChart(user.dizzyLog);
+            this.chartColors = ["#85be57"];
+
+            setTimeout(() => {
+              let gradient = this.canvas.nativeElement
+                .getContext("2d")
+                .createLinearGradient(0, 0, 0, 200);
+              gradient.addColorStop(0, "rgba(133,190,87,1)");
+              gradient.addColorStop(1, "rgba(133,190,87,0)");
+              this.chartColors = [
+                {
+                  backgroundColor: gradient
+                }
+              ];
+            });
           }
         }
         this.isLoading = false;
       });
   }
-  ngAfterViewInit() {
-    
-  }
+  ngAfterViewInit() {}
   updateChart(dizzyLog: DizzyLog[]) {
     this.chartData[0].data.length = 0;
     dizzyLog.forEach(log => {
